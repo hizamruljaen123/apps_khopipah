@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_21c74aa64ed51e5a796a1eb150b6de95 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_21c74aa64ed51e5a796a1eb150b6de95" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_21c74aa64ed51e5a796a1eb150b6de95 = L.map(
+                "map_21c74aa64ed51e5a796a1eb150b6de95",
+                {
+                    center: [1.4099, 99.7092],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 10,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_c5289c4428bde334acb243fdf33d9b9d = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_c5289c4428bde334acb243fdf33d9b9d.addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var marker_0f85ce6762a550d372005c54bd78f798 = L.marker(
+                [1.3166932, 99.4458336],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_7215d41d0dda8f0eca7b950fe30d55eb = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_0f85ce6762a550d372005c54bd78f798.setIcon(icon_7215d41d0dda8f0eca7b950fe30d55eb);
+        
+    
+        var popup_ad3bcadf016fd38790d5bb68033f17b1 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e9f79968b004272fbc7bad009087d7d7 = $(`<div id="html_e9f79968b004272fbc7bad009087d7d7" style="width: 100.0%; height: 100.0%;">Batang Onang: 1 kasus, Tingkat Kerawanan: Sangat Rawan</div>`)[0];
+                popup_ad3bcadf016fd38790d5bb68033f17b1.setContent(html_e9f79968b004272fbc7bad009087d7d7);
+            
+        
+
+        marker_0f85ce6762a550d372005c54bd78f798.bindPopup(popup_ad3bcadf016fd38790d5bb68033f17b1)
+        ;
+
+        
+    
+    
+            var marker_96e482c6a07d25cc0d00ff25d4077f11 = L.marker(
+                [1.6577, 98.5525],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_94dc4cd5bf9ac41d3917a46e7941f7d1 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "orange", "prefix": "glyphicon"}
+            );
+            marker_96e482c6a07d25cc0d00ff25d4077f11.setIcon(icon_94dc4cd5bf9ac41d3917a46e7941f7d1);
+        
+    
+        var popup_d400440cb3e30e9f46bcaf55d20eb121 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_670562b20105191f6ee3d0a6af389fb7 = $(`<div id="html_670562b20105191f6ee3d0a6af389fb7" style="width: 100.0%; height: 100.0%;">Dolok: 1 kasus, Tingkat Kerawanan: Rawan</div>`)[0];
+                popup_d400440cb3e30e9f46bcaf55d20eb121.setContent(html_670562b20105191f6ee3d0a6af389fb7);
+            
+        
+
+        marker_96e482c6a07d25cc0d00ff25d4077f11.bindPopup(popup_d400440cb3e30e9f46bcaf55d20eb121)
+        ;
+
+        
+    
+    
+            var marker_9a9deeaa81fdeab5ce0bbef07ee70cc9 = L.marker(
+                [1.9700433, 99.5356889],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_0690594abc3b13bc682357efd7944a28 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_9a9deeaa81fdeab5ce0bbef07ee70cc9.setIcon(icon_0690594abc3b13bc682357efd7944a28);
+        
+    
+        var popup_de91006705307c6f7436fc1a53a557da = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_f5765bcf2b34323c322059dc78729210 = $(`<div id="html_f5765bcf2b34323c322059dc78729210" style="width: 100.0%; height: 100.0%;">Dolok Sigompulon: 1 kasus, Tingkat Kerawanan: Sangat Rawan</div>`)[0];
+                popup_de91006705307c6f7436fc1a53a557da.setContent(html_f5765bcf2b34323c322059dc78729210);
+            
+        
+
+        marker_9a9deeaa81fdeab5ce0bbef07ee70cc9.bindPopup(popup_de91006705307c6f7436fc1a53a557da)
+        ;
+
+        
+    
+    
+            var marker_5d4e2188f5713b01122ef4df84f8c4bd = L.marker(
+                [1.6514398, 99.6593041],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_b587d89ebd3dc8832b6e9e16f6cc3232 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_5d4e2188f5713b01122ef4df84f8c4bd.setIcon(icon_b587d89ebd3dc8832b6e9e16f6cc3232);
+        
+    
+        var popup_e8fd4dc3eaa67ad590b2e6ccabaa3738 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_4b83e127d5e8b1d46428aa63e645a0c1 = $(`<div id="html_4b83e127d5e8b1d46428aa63e645a0c1" style="width: 100.0%; height: 100.0%;">Halongonan: 1 kasus, Tingkat Kerawanan: Sangat Rawan</div>`)[0];
+                popup_e8fd4dc3eaa67ad590b2e6ccabaa3738.setContent(html_4b83e127d5e8b1d46428aa63e645a0c1);
+            
+        
+
+        marker_5d4e2188f5713b01122ef4df84f8c4bd.bindPopup(popup_e8fd4dc3eaa67ad590b2e6ccabaa3738)
+        ;
+
+        
+    
+    
+            var marker_732ef6a1e220136deef8670fb01bc741 = L.marker(
+                [1.6373489, 99.4558203],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_f7b210053a09a2da9a756b0dc09092cd = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_732ef6a1e220136deef8670fb01bc741.setIcon(icon_f7b210053a09a2da9a756b0dc09092cd);
+        
+    
+        var popup_57b394f83096c6b6e76c7724e7d50fa7 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_846811dcd8b706c177ce2730e6e30081 = $(`<div id="html_846811dcd8b706c177ce2730e6e30081" style="width: 100.0%; height: 100.0%;">Halongonan Timur: 1 kasus, Tingkat Kerawanan: Sangat Rawan</div>`)[0];
+                popup_57b394f83096c6b6e76c7724e7d50fa7.setContent(html_846811dcd8b706c177ce2730e6e30081);
+            
+        
+
+        marker_732ef6a1e220136deef8670fb01bc741.bindPopup(popup_57b394f83096c6b6e76c7724e7d50fa7)
+        ;
+
+        
+    
+    
+            var marker_de1b7df590a95f7ae0c53bbc4337ca76 = L.marker(
+                [1.458091, 99.4268896],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_c17806e04ff12963a667c9d69c1e94ab = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_de1b7df590a95f7ae0c53bbc4337ca76.setIcon(icon_c17806e04ff12963a667c9d69c1e94ab);
+        
+    
+        var popup_fe9e300a2845989db811dd2a881cf8d9 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_168a0648cd033cb474235c80b124a213 = $(`<div id="html_168a0648cd033cb474235c80b124a213" style="width: 100.0%; height: 100.0%;">Hulu Sihapas: 1 kasus, Tingkat Kerawanan: Sangat Rawan</div>`)[0];
+                popup_fe9e300a2845989db811dd2a881cf8d9.setContent(html_168a0648cd033cb474235c80b124a213);
+            
+        
+
+        marker_de1b7df590a95f7ae0c53bbc4337ca76.bindPopup(popup_fe9e300a2845989db811dd2a881cf8d9)
+        ;
+
+        
+    
+    
+            var marker_631748233ee2db85c9f0b761c19ca43c = L.marker(
+                [3.5685536, 98.7273622],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_22935d4c56bf81dc649c00755a4c54aa = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_631748233ee2db85c9f0b761c19ca43c.setIcon(icon_22935d4c56bf81dc649c00755a4c54aa);
+        
+    
+        var popup_5c9ac05f50e7f020745097cdcef031ff = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_c1a655fb69d408213a2c5ee6793cb9d4 = $(`<div id="html_c1a655fb69d408213a2c5ee6793cb9d4" style="width: 100.0%; height: 100.0%;">Padang Bolak: 1 kasus, Tingkat Kerawanan: Sangat Rawan</div>`)[0];
+                popup_5c9ac05f50e7f020745097cdcef031ff.setContent(html_c1a655fb69d408213a2c5ee6793cb9d4);
+            
+        
+
+        marker_631748233ee2db85c9f0b761c19ca43c.bindPopup(popup_5c9ac05f50e7f020745097cdcef031ff)
+        ;
+
+        
+    
+    
+            var marker_497ede793e52c3cd66bb48d733196d7b = L.marker(
+                [1.415091, 99.5576002],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_0c8ef3185094edaed05cc357524e3ab7 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_497ede793e52c3cd66bb48d733196d7b.setIcon(icon_0c8ef3185094edaed05cc357524e3ab7);
+        
+    
+        var popup_1a8d0628b1ba26ce8e4148369b1a6f21 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_5aa0da1062c7c2d1b9d0542816106843 = $(`<div id="html_5aa0da1062c7c2d1b9d0542816106843" style="width: 100.0%; height: 100.0%;">Padang Bolak Julu: 1 kasus, Tingkat Kerawanan: Aman</div>`)[0];
+                popup_1a8d0628b1ba26ce8e4148369b1a6f21.setContent(html_5aa0da1062c7c2d1b9d0542816106843);
+            
+        
+
+        marker_497ede793e52c3cd66bb48d733196d7b.bindPopup(popup_1a8d0628b1ba26ce8e4148369b1a6f21)
+        ;
+
+        
+    
+    
+            var marker_2ae4599c6441525703d67edeabeb477b = L.marker(
+                [1.54001, 99.3234082],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_1f8fe2f27f1f7ce405ec2c2869261fe2 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_2ae4599c6441525703d67edeabeb477b.setIcon(icon_1f8fe2f27f1f7ce405ec2c2869261fe2);
+        
+    
+        var popup_31257cc97b01eb18260f05b82d4b2919 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_bc54ac88ef0a4fab06f48f576d1b93ee = $(`<div id="html_bc54ac88ef0a4fab06f48f576d1b93ee" style="width: 100.0%; height: 100.0%;">Padang Bolak Tenggara: 1 kasus, Tingkat Kerawanan: Aman</div>`)[0];
+                popup_31257cc97b01eb18260f05b82d4b2919.setContent(html_bc54ac88ef0a4fab06f48f576d1b93ee);
+            
+        
+
+        marker_2ae4599c6441525703d67edeabeb477b.bindPopup(popup_31257cc97b01eb18260f05b82d4b2919)
+        ;
+
+        
+    
+    
+            var marker_8060a59b7393d5b407e2aabfee1c87e1 = L.marker(
+                [1.4375683, 99.7032047],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_92bdd148c0757594b510a1e25858b4f6 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "yellow", "prefix": "glyphicon"}
+            );
+            marker_8060a59b7393d5b407e2aabfee1c87e1.setIcon(icon_92bdd148c0757594b510a1e25858b4f6);
+        
+    
+        var popup_dab601494f200dde9f300009f2fae978 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_028be6313b301b0ffa33fd3c404891a6 = $(`<div id="html_028be6313b301b0ffa33fd3c404891a6" style="width: 100.0%; height: 100.0%;">Portibi: 1 kasus, Tingkat Kerawanan: Berpotensi Rawan</div>`)[0];
+                popup_dab601494f200dde9f300009f2fae978.setContent(html_028be6313b301b0ffa33fd3c404891a6);
+            
+        
+
+        marker_8060a59b7393d5b407e2aabfee1c87e1.bindPopup(popup_dab601494f200dde9f300009f2fae978)
+        ;
+
+        
+    
+    
+            var marker_ca2a12fe4b84f580562838dbc75ddf0c = L.marker(
+                [1.8957231, 99.7846397],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_1bdbce6942e8e07aa7d78ef06de14550 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "orange", "prefix": "glyphicon"}
+            );
+            marker_ca2a12fe4b84f580562838dbc75ddf0c.setIcon(icon_1bdbce6942e8e07aa7d78ef06de14550);
+        
+    
+        var popup_30b79f2099af6c1357e51476db0310ec = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_dfb3c7d019461d58fb9d70fed6764f16 = $(`<div id="html_dfb3c7d019461d58fb9d70fed6764f16" style="width: 100.0%; height: 100.0%;">Simangambat: 1 kasus, Tingkat Kerawanan: Rawan</div>`)[0];
+                popup_30b79f2099af6c1357e51476db0310ec.setContent(html_dfb3c7d019461d58fb9d70fed6764f16);
+            
+        
+
+        marker_ca2a12fe4b84f580562838dbc75ddf0c.bindPopup(popup_30b79f2099af6c1357e51476db0310ec)
+        ;
+
+        
+    
+    
+            var marker_d3059bee2a2a1e29644b8e5c8f682d02 = L.marker(
+                [1.1896051, 99.99013],
+                {}
+            ).addTo(map_21c74aa64ed51e5a796a1eb150b6de95);
+        
+    
+            var icon_05d6f8b6785e47f9fe8e182219e01f1a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "yellow", "prefix": "glyphicon"}
+            );
+            marker_d3059bee2a2a1e29644b8e5c8f682d02.setIcon(icon_05d6f8b6785e47f9fe8e182219e01f1a);
+        
+    
+        var popup_3a333a68e2e36a928025a58d55ceb6a5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_38ff7cca2c70f38607e6314b7f0b5455 = $(`<div id="html_38ff7cca2c70f38607e6314b7f0b5455" style="width: 100.0%; height: 100.0%;">Ujung Batu: 1 kasus, Tingkat Kerawanan: Berpotensi Rawan</div>`)[0];
+                popup_3a333a68e2e36a928025a58d55ceb6a5.setContent(html_38ff7cca2c70f38607e6314b7f0b5455);
+            
+        
+
+        marker_d3059bee2a2a1e29644b8e5c8f682d02.bindPopup(popup_3a333a68e2e36a928025a58d55ceb6a5)
+        ;
+
+        
+    
+</script>
+</html>
