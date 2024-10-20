@@ -1,7 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Peta Tingkat Kerawanan Kecelakaan {% if year %} untuk Tahun {{ year }} {% endif %}</h2>
-<div>
+<h2>{{ title }}</h2>
+
+<!-- Formulir Pemilihan Tahun -->
+<form method="POST" class="form-inline mb-4">
+    <label class="mr-2" for="year">Pilih Tahun:</label>
+    <select name="year" id="year" class="form-control mr-2">
+        {% for year in available_years %}
+            <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Tampilkan</button>
+</form>
+
+<!-- Peta Folium -->
+<div id="map">
     {{ map_html | safe }}
 </div>
 {% endblock %}

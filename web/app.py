@@ -7,7 +7,7 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import plotly.express as px
-import plotly.graph_objects as go  # Import untuk tabel
+import plotly.graph_objects as go
 import folium
 from folium.plugins import MarkerCluster
 import io
@@ -17,6 +17,7 @@ app = Flask(__name__)
 # Path ke data dan model
 DATA_PATH = 'data/Data_Kecelakaan_Padang_Lawas_Utara.xlsx'
 MODEL_PATH = 'models/kmeans_model.pkl'
+SCALER_PATH = 'models/scaler.pkl'
 OUTPUT_EXCEL = 'data/Hasil_Klastering_Kecelakaan_Padang_Lawas_Utara.xlsx'
 
 # Koordinat kecamatan
@@ -59,7 +60,7 @@ def train_model():
     df['Cluster'] = kmeans.labels_
     
     # Simpan scaler dan model
-    joblib.dump(scaler, 'models/scaler.pkl')
+    joblib.dump(scaler, SCALER_PATH)
     joblib.dump(kmeans, MODEL_PATH)
     
     # Mapping klaster ke tingkat kerawanan
@@ -96,10 +97,9 @@ def results():
         return redirect(url_for('train'))
     df = pd.read_excel(OUTPUT_EXCEL)
     # Tampilkan 10 baris pertama
-    data = df.to_html(classes='table table-striped', index=False)
-    return render_template('results.html', tables=[data], titles=['Hasil Klasterisasi'])
+    data = df.head(10).to_dict(orient='records')
+    return render_template('results.html', tables=data, titles=['Hasil Klasterisasi'])
 
-# Rute untuk Visualisasi dengan Plotly
 # Rute untuk Visualisasi dengan Plotly
 @app.route('/visualize')
 def visualize():
@@ -167,62 +167,31 @@ def visualize():
     
     return render_template('visualize.html', graph_html=graph_html, table_html=table_html)
 
-
-# Rute untuk Menampilkan Peta Folium
-@app.route('/map')
+# Rute untuk Menampilkan Peta Folium dengan Pemilihan Tahun
+@app.route('/map', methods=['GET', 'POST'])
 def map_view():
     if not os.path.exists(OUTPUT_EXCEL):
         return redirect(url_for('train'))
+    
     df = pd.read_excel(OUTPUT_EXCEL)
     
-    # Tambahkan koordinat
-    df['Coordinates'] = df['Kecamatan'].map(kecamatan_coords)
+    # Mendapatkan daftar tahun yang tersedia
+    available_years = sorted(df['Tahun'].unique())
     
-    # Hanya baris dengan koordinat valid
-    df = df[df['Coordinates'].notna()]
+    if request.method == 'POST':
+        selected_year = int(request.form.get('year'))
+        return redirect(url_for('map_view', year=selected_year))
+    else:
+        selected_year = request.args.get('year', default=None, type=int)
     
-    # Warna untuk setiap tingkat kerawanan
-    color_map = {
-        "Aman": "green",
-        "Berpotensi Rawan": "yellow",
-        "Rawan": "orange",
-        "Sangat Rawan": "red"
-    }
-    
-    # Buat peta dasar
-    m = folium.Map(location=[1.4099, 99.7092], zoom_start=10)
-    marker_cluster = MarkerCluster().add_to(m)
-    
-    # Tambahkan marker
-    for _, row in df.iterrows():
-        coords = row['Coordinates']
-        folium.Marker(
-            location=coords,
-            popup=f"{row['Kecamatan']}: {row['Jumlah Kecelakaan']} kasus, Tingkat Kerawanan: {row['Tingkat Kerawanan']}",
-            icon=folium.Icon(color=color_map.get(row['Tingkat Kerawanan'], 'blue'))
-        ).add_to(marker_cluster)
-    
-    # Render Folium map sebagai HTML
-    map_html = m._repr_html_()
-    
-    return render_template('map.html', map_html=map_html)
-
-# Rute untuk Mengunduh Hasil Klasterisasi
-@app.route('/download')
-def download():
-    if not os.path.exists(OUTPUT_EXCEL):
-        return redirect(url_for('train'))
-    return send_file(OUTPUT_EXCEL, as_attachment=True)
-
-# Rute untuk Menampilkan Peta dengan Tahun Tertentu
-@app.route('/map/<int:year>')
-def map_year(year):
-    if not os.path.exists(OUTPUT_EXCEL):
-        return redirect(url_for('train'))
-    df = pd.read_excel(OUTPUT_EXCEL)
-    
-    # Filter data berdasarkan tahun
-    df_year = df[df['Tahun'] == year]
+    if selected_year:
+        df_year = df[df['Tahun'] == selected_year]
+        title = f"Tingkat Kerawanan Kecelakaan Tahun {selected_year}"
+    else:
+        # Jika tidak ada tahun yang dipilih, tampilkan peta tanpa filter atau dengan tahun terbaru
+        selected_year = df['Tahun'].max()
+        df_year = df[df['Tahun'] == selected_year]
+        title = f"Tingkat Kerawanan Kecelakaan Tahun {selected_year}"
     
     # Tambahkan koordinat
     df_year['Coordinates'] = df_year['Kecamatan'].map(kecamatan_coords)
@@ -254,7 +223,17 @@ def map_year(year):
     # Render Folium map sebagai HTML
     map_html = m._repr_html_()
     
-    return render_template('map.html', map_html=map_html, year=year)
+    return render_template('map.html', map_html=map_html, available_years=available_years, selected_year=selected_year, title=title)
+
+# Rute untuk Mengunduh Hasil Klasterisasi
+@app.route('/download')
+def download():
+    if not os.path.exists(OUTPUT_EXCEL):
+        return redirect(url_for('train'))
+    return send_file(OUTPUT_EXCEL, as_attachment=True)
 
 if __name__ == '__main__':
+    # Pastikan direktori models dan data ada
+    os.makedirs('models', exist_ok=True)
+    os.makedirs('data', exist_ok=True)
     app.run(debug=True)
