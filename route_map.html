@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_4aa239279eb253b76245fb9a8453b6fc {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_4aa239279eb253b76245fb9a8453b6fc" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_4aa239279eb253b76245fb9a8453b6fc = L.map(
+                "map_4aa239279eb253b76245fb9a8453b6fc",
+                {
+                    center: [5.0, 95.0],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 8,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_4916f75c7179133d2d954223b5b7dbab = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_4916f75c7179133d2d954223b5b7dbab.addTo(map_4aa239279eb253b76245fb9a8453b6fc);
+        
+    
+            var marker_bc95537c6571687b1a312b6859c16e93 = L.marker(
+                [4.286149, 98.063643],
+                {}
+            ).addTo(map_4aa239279eb253b76245fb9a8453b6fc);
+        
+    
+        var popup_664519f06856a5f7cbb1a0f6754aa268 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_06ebef1a0315cb402d9de8156d66d369 = $(`<div id="html_06ebef1a0315cb402d9de8156d66d369" style="width: 100.0%; height: 100.0%;">Kuala Simpang</div>`)[0];
+                popup_664519f06856a5f7cbb1a0f6754aa268.setContent(html_06ebef1a0315cb402d9de8156d66d369);
+            
+        
+
+        marker_bc95537c6571687b1a312b6859c16e93.bindPopup(popup_664519f06856a5f7cbb1a0f6754aa268)
+        ;
+
+        
+    
+    
+            var marker_02fc050a235e135cbef8dc66a77e09b3 = L.marker(
+                [5.100982, 97.417781],
+                {}
+            ).addTo(map_4aa239279eb253b76245fb9a8453b6fc);
+        
+    
+        var popup_61abdf05f103b8ddb7f918754476ca51 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_222d09bbdd1734ae513d498770cef72f = $(`<div id="html_222d09bbdd1734ae513d498770cef72f" style="width: 100.0%; height: 100.0%;">Gluempang Pasong</div>`)[0];
+                popup_61abdf05f103b8ddb7f918754476ca51.setContent(html_222d09bbdd1734ae513d498770cef72f);
+            
+        
+
+        marker_02fc050a235e135cbef8dc66a77e09b3.bindPopup(popup_61abdf05f103b8ddb7f918754476ca51)
+        ;
+
+        
+    
+    
+            var marker_d2aaa503d8ebe75bc067fdd36a6d7ae6 = L.marker(
+                [5.211685, 96.652958],
+                {}
+            ).addTo(map_4aa239279eb253b76245fb9a8453b6fc);
+        
+    
+        var popup_eeddac2793beb4db9a15a9685af7a6f8 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_6cd99d127e5797dca6ccb2eb995d4332 = $(`<div id="html_6cd99d127e5797dca6ccb2eb995d4332" style="width: 100.0%; height: 100.0%;">Blang dalam</div>`)[0];
+                popup_eeddac2793beb4db9a15a9685af7a6f8.setContent(html_6cd99d127e5797dca6ccb2eb995d4332);
+            
+        
+
+        marker_d2aaa503d8ebe75bc067fdd36a6d7ae6.bindPopup(popup_eeddac2793beb4db9a15a9685af7a6f8)
+        ;
+
+        
+    
+    
+            var marker_3d39341def0f49be80c927586451e826 = L.marker(
+                [5.08274, 96.592121],
+                {}
+            ).addTo(map_4aa239279eb253b76245fb9a8453b6fc);
+        
+    
+        var popup_ff1194ef53d9ef9909c22ff31332e879 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_86c489aad99b05316ce8b6cd076972ac = $(`<div id="html_86c489aad99b05316ce8b6cd076972ac" style="width: 100.0%; height: 100.0%;">Bireuen</div>`)[0];
+                popup_ff1194ef53d9ef9909c22ff31332e879.setContent(html_86c489aad99b05316ce8b6cd076972ac);
+            
+        
+
+        marker_3d39341def0f49be80c927586451e826.bindPopup(popup_ff1194ef53d9ef9909c22ff31332e879)
+        ;
+
+        
+    
+    
+            var marker_d299896c4a68aaf5bf1e27d1291c8001 = L.marker(
+                [5.201185, 96.61737],
+                {}
+            ).addTo(map_4aa239279eb253b76245fb9a8453b6fc);
+        
+    
+        var popup_6926ad1d99e336c1f6bc6d755e38a025 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_fec5b1159526824fb40053927a19ff81 = $(`<div id="html_fec5b1159526824fb40053927a19ff81" style="width: 100.0%; height: 100.0%;">Teupok</div>`)[0];
+                popup_6926ad1d99e336c1f6bc6d755e38a025.setContent(html_fec5b1159526824fb40053927a19ff81);
+            
+        
+
+        marker_d299896c4a68aaf5bf1e27d1291c8001.bindPopup(popup_6926ad1d99e336c1f6bc6d755e38a025)
+        ;
+
+        
+    
+    
+            var marker_f4866496f7ba71374cf70363c2ccf273 = L.marker(
+                [5.205444, 96.628706],
+                {}
+            ).addTo(map_4aa239279eb253b76245fb9a8453b6fc);
+        
+    
+        var popup_28fcc7b93e960979dad7a3b8eecdb175 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d4c85302eb1241899c8002528c3be3a5 = $(`<div id="html_d4c85302eb1241899c8002528c3be3a5" style="width: 100.0%; height: 100.0%;">Mon jambee</div>`)[0];
+                popup_28fcc7b93e960979dad7a3b8eecdb175.setContent(html_d4c85302eb1241899c8002528c3be3a5);
+            
+        
+
+        marker_f4866496f7ba71374cf70363c2ccf273.bindPopup(popup_28fcc7b93e960979dad7a3b8eecdb175)
+        ;
+
+        
+    
+    
+            var marker_151e7c4febee352fd80af0e6295505db = L.marker(
+                [5.202435, 96.783234],
+                {}
+            ).addTo(map_4aa239279eb253b76245fb9a8453b6fc);
+        
+    
+        var popup_725b3087cb6874527d691b03f6614239 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_0b777fd0d9b8dc904c959d24d4c6e73c = $(`<div id="html_0b777fd0d9b8dc904c959d24d4c6e73c" style="width: 100.0%; height: 100.0%;">Matang Glumpang Dua</div>`)[0];
+                popup_725b3087cb6874527d691b03f6614239.setContent(html_0b777fd0d9b8dc904c959d24d4c6e73c);
+            
+        
+
+        marker_151e7c4febee352fd80af0e6295505db.bindPopup(popup_725b3087cb6874527d691b03f6614239)
+        ;
+
+        
+    
+    
+            var marker_5cae2b39a2b3c3a256ff958518e4c430 = L.marker(
+                [5.552846, 95.319291],
+                {}
+            ).addTo(map_4aa239279eb253b76245fb9a8453b6fc);
+        
+    
+        var popup_e1550ee1d099e3ae1f8690fcba863b17 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e049fc621fa5cadea9829feaf6429fca = $(`<div id="html_e049fc621fa5cadea9829feaf6429fca" style="width: 100.0%; height: 100.0%;">Banda Aceh</div>`)[0];
+                popup_e1550ee1d099e3ae1f8690fcba863b17.setContent(html_e049fc621fa5cadea9829feaf6429fca);
+            
+        
+
+        marker_5cae2b39a2b3c3a256ff958518e4c430.bindPopup(popup_e1550ee1d099e3ae1f8690fcba863b17)
+        ;
+
+        
+    
+</script>
+</html>

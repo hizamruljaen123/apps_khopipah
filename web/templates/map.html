@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Peta Tingkat Kerawanan Kecelakaan {% if year %} untuk Tahun {{ year }} {% endif %}</h2>
+<div>
+    {{ map_html | safe }}
+</div>
+{% endblock %}

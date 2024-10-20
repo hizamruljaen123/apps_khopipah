@@ -1,0 +1,254 @@
+/* --- Existing CSS Styles --- */
+
+/* Wrapper Styles */
+#wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+/* Sidebar Styles */
+#sidebar-wrapper {
+    min-width: 250px;
+    max-width: 250px;
+    transition: all 0.3s;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: -250px;
+}
+
+#page-content-wrapper {
+    width: 100%;
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+/* Sidebar Heading */
+.sidebar-heading {
+    background-color: #343a40;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Sidebar Links */
+.list-group-item {
+    border: none;
+    padding: 15px 20px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.list-group-item:hover {
+    background-color: #495057;
+    color: #fff;
+}
+
+/* Active Link */
+.list-group-item.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Toggle Button */
+#menu-toggle {
+    margin-left: 10px;
+}
+
+/* Content Styles */
+.container-fluid {
+    padding: 20px;
+}
+
+/* --- Enhanced Table Styles --- */
+
+/* General Table Styling */
+.table {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.table:hover {
+    transform: translateY(-5px);
+}
+
+/* Table Header Styling */
+.table th {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px 15px;
+    transition: background-color 0.3s;
+}
+
+.table th:hover {
+    background-color: #0056b3;
+}
+
+/* Table Body Styling */
+.table td {
+    padding: 12px 15px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+/* Striped Rows */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: rgba(0, 123, 255, 0.02);
+}
+
+/* Hover Effect on Rows */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    cursor: pointer;
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+    .table thead {
+        display: none;
+    }
+
+    .table, .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+    }
+
+    .table tr {
+        margin-bottom: 15px;
+    }
+
+    .table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    .table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+    }
+}
+
+/* Plotly Table Styling */
+.plotly-table-div {
+    margin-top: 20px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.plotly-table-div table {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+}
+
+.plotly-table-div th {
+    background-color: #007bff;
+    color: #fff !important;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    transition: background-color 0.3s;
+}
+
+.plotly-table-div th:hover {
+    background-color: #0056b3 !important;
+}
+
+.plotly-table-div td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    transition: background-color 0.3s;
+}
+
+.plotly-table-div tr:nth-child(even) td {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.plotly-table-div tr:hover td {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Jumbotron */
+.jumbotron {
+    background-color: #f1f1f1;
+    padding: 2rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border: none;
+    transition: background 0.3s;
+}
+
+.btn-success:hover {
+    background-color: #1e7e34;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+    transition: background 0.3s;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Plotly Graphs */
+.plotly-graph-div {
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* Folium Map */
+#map {
+    width: 100%;
+    height: 600px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: -250px;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: 0;
+    }
+}

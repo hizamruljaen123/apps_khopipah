@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Visualisasi Data</h2>
+<div class="mb-5">
+    <h4>Jumlah Tingkat Keparahan Kecelakaan Per Tahun</h4>
+    <center>    
+        <div style="width: 100%;">
+            {{ graph_html | safe }}
+        </div>
+    </center>
+   
+</div>
+<div>
+    <h4>Tingkat Kerawanan per Kecamatan dan Tahun</h4>
+    <div>
+        {{ table_html | safe }}
+    </div>
+</div>
+{% endblock %}

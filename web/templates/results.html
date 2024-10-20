@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Hasil Klasterisasi</h2>
+{% for table in tables %}
+    {{ table | safe }}
+{% endfor %}
+<a href="{{ url_for('download') }}" class="btn btn-primary mt-3">Unduh Hasil Excel</a>
+{% endblock %}
