@@ -95,16 +95,19 @@ def train():
 def results():
     if not os.path.exists(OUTPUT_EXCEL):
         return redirect(url_for('train'))
+    
     df = pd.read_excel(OUTPUT_EXCEL)
-    # Tampilkan 10 baris pertama
-    data = df.head(10).to_dict(orient='records')
-    return render_template('results.html', tables=data, titles=['Hasil Klasterisasi'])
+    
+    # Tampilkan semua data, tidak hanya 10 baris pertama
+    data = df.to_dict(orient='records')  # Convert entire DataFrame to dictionary
+    return render_template('results.html', data=data)
 
 # Rute untuk Visualisasi dengan Plotly
 @app.route('/visualize')
 def visualize():
     if not os.path.exists(OUTPUT_EXCEL):
         return redirect(url_for('train'))
+
     df = pd.read_excel(OUTPUT_EXCEL)
     
     # **Bagian 1: Visualisasi Bar Chart Tingkat Kerawanan per Tahun**
@@ -113,8 +116,9 @@ def visualize():
     severity_by_year = df.groupby(['Tahun', 'Tingkat Kerawanan']).size().unstack(fill_value=0).reset_index()
     
     # Melt the DataFrame untuk Plotly
-    severity_melted = pd.melt(severity_by_year, id_vars=['Tahun'], value_vars=["Aman", "Berpotensi Rawan", "Rawan", "Sangat Rawan"], 
-                              var_name='Tingkat Kerawanan', value_name='Jumlah Kasus')
+    severity_melted = pd.melt(severity_by_year, id_vars=['Tahun'], 
+                               value_vars=["Aman", "Berpotensi Rawan", "Rawan", "Sangat Rawan"], 
+                               var_name='Tingkat Kerawanan', value_name='Jumlah Kasus')
     
     # Visualisasi dengan Plotly Bar Chart
     fig_bar = px.bar(severity_melted, x='Tahun', y='Jumlah Kasus', color='Tingkat Kerawanan',
@@ -164,8 +168,51 @@ def visualize():
     fig_table.update_layout(title='Tingkat Kerawanan per Kecamatan dan Tahun')
     
     table_html = fig_table.to_html(full_html=False)
+
+    # **Bagian 3: Visualisasi Stacked Bar Chart untuk Meninggal, Luka Berat, dan Luka Ringan**
     
-    return render_template('visualize.html', graph_html=graph_html, table_html=table_html)
+    # Mengelompokkan data berdasarkan kecamatan dan tahun, menghitung total masing-masing kategori
+    summary_by_category = df.groupby(['Kecamatan', 'Tahun']).agg({
+        'Jumlah Meninggal': 'sum',
+        'Jumlah Luka Berat': 'sum',
+        'Jumlah Luka Ringan': 'sum'
+    }).reset_index()
+
+    # Membuat data dalam format long untuk visualisasi stacked bar chart
+    summary_melted = summary_by_category.melt(
+        id_vars=['Kecamatan', 'Tahun'],
+        value_vars=['Jumlah Meninggal', 'Jumlah Luka Berat', 'Jumlah Luka Ringan'],
+        var_name='Kategori',
+        value_name='Jumlah'
+    )
+
+    # Visualisasi dengan Plotly untuk Stacked Bar Chart
+    fig_stacked = px.bar(
+        summary_melted,
+        x='Kecamatan',
+        y='Jumlah',
+        color='Kategori',
+        barmode='stack',
+        facet_col='Tahun',
+        height=600,
+        title='Jumlah Meninggal, Luka Berat, dan Luka Ringan Per Tahun Berdasarkan Kecamatan'
+    )
+    
+    fig_stacked.update_layout(
+        xaxis_title='Kecamatan',
+        yaxis_title='Jumlah Kasus',
+        legend_title='Kategori'
+    )
+    
+    fig_stacked.update_xaxes(tickangle=45)
+
+    stacked_graph_html = fig_stacked.to_html(full_html=False)
+
+    return render_template('visualize.html', 
+                           graph_html=graph_html, 
+                           table_html=table_html, 
+                           stacked_graph_html=stacked_graph_html)
+
 
 # Rute untuk Menampilkan Peta Folium dengan Pemilihan Tahun
 @app.route('/map', methods=['GET', 'POST'])

@@ -1,8 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Hasil Klasterisasi</h2>
-{% for table in tables %}
-    {{ table | safe }}
-{% endfor %}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Kecamatan</th>
+                <th>Tahun</th>
+                <th>Jumlah Kecelakaan</th>
+                <th>Jumlah Meninggal</th>
+                <th>Jumlah Luka Berat</th>
+                <th>Jumlah Luka Ringan</th>
+                <th>Kondisi Jalan</th>
+                <th>Cuaca</th>
+                <th>Waktu Kecelakaan</th>
+                <th>Jumlah Kendaraan</th>
+                <th>Kecepatan Rata-rata</th>
+                <th>Cluster</th>
+                <th>Tingkat Kerawanan</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ row['Kecamatan'] }}</td>
+                <td>{{ row['Tahun'] }}</td>
+                <td>{{ row['Jumlah Kecelakaan'] }}</td>
+                <td>{{ row['Jumlah Meninggal'] }}</td>
+                <td>{{ row['Jumlah Luka Berat'] }}</td>
+                <td>{{ row['Jumlah Luka Ringan'] }}</td>
+                <td>{{ row['Kondisi Jalan'] }}</td>
+                <td>{{ row['Cuaca'] }}</td>
+                <td>{{ row['Waktu Kecelakaan'] }}</td>
+                <td>{{ row['Jumlah Kendaraan'] }}</td>
+                <td>{{ row['Kecepatan Rata-rata'] }}</td>
+                <td>{{ row['Cluster'] }}</td>
+                <td>{{ row['Tingkat Kerawanan'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 <a href="{{ url_for('download') }}" class="btn btn-primary mt-3">Unduh Hasil Excel</a>
 {% endblock %}
