@@ -4,7 +4,6 @@ import numpy as np
 import joblib
 import os
 import plotly.express as px
-import plotly.graph_objects as go
 import folium
 from folium.plugins import MarkerCluster
 
@@ -65,12 +64,10 @@ def calculate_purity(df):
     total = len(df)
     
     for index, row in df.iterrows():
-        if row['Cluster'] == 1:  # C1 = Rawan
-            if row['Tingkat Kerawanan'] == "Rawan":
-                correct += 1
-        elif row['Cluster'] == 2:  # C2 = Tidak Rawan
-            if row['Tingkat Kerawanan'] == "Tidak Rawan":
-                correct += 1
+        if row['Cluster'] == 1 and row['Tingkat Kerawanan'] == "Rawan":
+            correct += 1
+        elif row['Cluster'] == 2 and row['Tingkat Kerawanan'] == "Tidak Rawan":
+            correct += 1
     
     purity = correct / total
     return purity
@@ -81,29 +78,23 @@ def train_model():
     features = ["Jumlah Kecelakaan", "Jumlah Meninggal", "Jumlah Luka Berat", "Jumlah Luka Ringan"]
     X = df[features]
     
-    # Tentukan jumlah klaster berdasarkan kebutuhan atau hasil WCSS
-    k = 2  # Jumlah klaster yang sesuai dengan dokumen (Rawan dan Tidak Rawan)
+    # Tentukan jumlah klaster (2: Rawan dan Tidak Rawan)
+    k = 2
 
     # Inisialisasi centroid manual
-    centroid_c1 = np.array([169, 3, 12, 26])  # Contoh centroid C1
-    centroid_c2 = np.array([55, 3, 16, 42])  # Contoh centroid C2
+    centroid_c1 = np.array([169, 3, 12, 26])  # Contoh centroid Rawan
+    centroid_c2 = np.array([55, 3, 16, 42])   # Contoh centroid Tidak Rawan
 
     # Iterasi untuk memperbarui centroid
     for i in range(10):  # Maksimal 10 iterasi
-        # Menghitung jarak
         distances_c1, distances_c2 = calculate_distances(df, centroid_c1, centroid_c2)
+        df['Cluster'] = np.where(np.array(distances_c1) < np.array(distances_c2), 1, 2)
         
-        # Menetapkan klaster berdasarkan jarak
-        df['Cluster'] = np.where(np.array(distances_c1) < np.array(distances_c2), 1, 2)  # C1=1, C2=2
+        cluster_c1 = df[df['Cluster'] == 1][features].values
+        cluster_c2 = df[df['Cluster'] == 2][features].values
         
-        # Mengelompokkan data untuk klaster 1 dan klaster 2
-        cluster_c1 = df[df['Cluster'] == 1][['Jumlah Kecelakaan', 'Jumlah Meninggal', 'Jumlah Luka Berat', 'Jumlah Luka Ringan']].values
-        cluster_c2 = df[df['Cluster'] == 2][['Jumlah Kecelakaan', 'Jumlah Meninggal', 'Jumlah Luka Berat', 'Jumlah Luka Ringan']].values
-        
-        # Pembaruan centroid
         new_centroid_c1, new_centroid_c2 = update_centroids(df, cluster_c1, cluster_c2)
         
-        # Jika centroid tidak berubah, hentikan iterasi
         if np.array_equal(new_centroid_c1, centroid_c1) and np.array_equal(new_centroid_c2, centroid_c2):
             break
         
@@ -137,8 +128,8 @@ def train():
 
 @app.route('/train_model', methods=['GET'])
 def train_model_route():
-    df = train_model()  # Panggil fungsi train_model
-    return redirect(url_for('results'))  # Redirect ke halaman results setelah model dilatih
+    train_model()
+    return redirect(url_for('results'))
 
 # Rute untuk Menampilkan Hasil Klasterisasi
 @app.route('/results')
@@ -147,11 +138,10 @@ def results():
         return redirect(url_for('train'))
     
     df = pd.read_excel(OUTPUT_EXCEL)
-    
-    # Tampilkan semua data, tidak hanya 10 baris pertama
-    data = df.to_dict(orient='records')  # Convert entire DataFrame to dictionary
+    data = df.to_dict(orient='records')
     return render_template('results.html', data=data)
 
+# Rute untuk Visualisasi dengan Plotly
 # Rute untuk Visualisasi dengan Plotly
 @app.route('/visualize')
 def visualize():
@@ -159,42 +149,48 @@ def visualize():
         return redirect(url_for('train'))
 
     df = pd.read_excel(OUTPUT_EXCEL)
-    
+
+    # Membuat tabel HTML dari DataFrame
+    table_html = df.to_html(classes='table table-striped', index=False)
+
     # Visualisasi Bar Chart Tingkat Kerawanan per Tahun
     severity_by_year = df.groupby(['Tahun', 'Tingkat Kerawanan']).size().unstack(fill_value=0).reset_index()
-    severity_melted = pd.melt(severity_by_year, id_vars=['Tahun'], 
-                               value_vars=["Rawan", "Tidak Rawan"], 
-                               var_name='Tingkat Kerawanan', value_name='Jumlah Kasus')
-    
+    severity_melted = pd.melt(severity_by_year, id_vars=['Tahun'],
+                              value_vars=["Rawan", "Tidak Rawan"],
+                              var_name='Tingkat Kerawanan', value_name='Jumlah Kasus')
+
     fig_bar = px.bar(severity_melted, x='Tahun', y='Jumlah Kasus', color='Tingkat Kerawanan',
                      title='Jumlah Tingkat Keparahan Kecelakaan Per Tahun',
                      labels={'Jumlah Kasus': 'Jumlah Kasus'},
-                     height=600, 
-                     width=1000, 
-                     text='Jumlah Kasus',
+                     height=600, width=1000, text='Jumlah Kasus',
                      category_orders={'Tingkat Kerawanan': ["Rawan", "Tidak Rawan"]})
-    
-    fig_bar.update_traces(texttemplate='%{text}', textposition='outside', 
-                          marker=dict(line=dict(color='rgb(0,0,0)', width=1.5)))
-    
+
+    fig_bar.update_traces(texttemplate='%{text}', textposition='outside')
     fig_bar.update_layout(xaxis_title='Tahun',
                           yaxis_title='Jumlah Kasus',
                           legend_title='Tingkat Kerawanan',
                           barmode='stack')
-    
-    graph_html = fig_bar.to_html(full_html=False)
-    
-    return render_template('visualize.html', graph_html=graph_html)
 
-# Rute untuk Menampilkan Peta Folium dengan Pemilihan Tahun
+    graph_html = fig_bar.to_html(full_html=False)
+
+    # Visualisasi Bar Chart untuk Meninggal, Luka Berat, dan Luka Ringan
+    fig_stacked = px.bar(df, x='Kecamatan', y=['Jumlah Meninggal', 'Jumlah Luka Berat', 'Jumlah Luka Ringan'],
+                         title='Jumlah Meninggal, Luka Berat, dan Luka Ringan Per Tahun Berdasarkan Kecamatan',
+                         labels={'value': 'Jumlah Kasus', 'variable': 'Kategori'},
+                         barmode='stack', height=600, width=1000)
+
+    stacked_graph_html = fig_stacked.to_html(full_html=False)
+
+    return render_template('visualize.html', table_html=table_html, graph_html=graph_html, stacked_graph_html=stacked_graph_html)
+
+
+# Rute untuk Menampilkan Peta Folium
 @app.route('/map', methods=['GET', 'POST'])
 def map_view():
     if not os.path.exists(OUTPUT_EXCEL):
         return redirect(url_for('train'))
     
     df = pd.read_excel(OUTPUT_EXCEL)
-    
-    # Mendapatkan daftar tahun yang tersedia
     available_years = sorted(df['Tahun'].unique())
     
     if request.method == 'POST':
@@ -211,9 +207,7 @@ def map_view():
         df_year = df[df['Tahun'] == selected_year]
         title = f"Tingkat Kerawanan Kecelakaan Tahun {selected_year}"
     
-    # Tambahkan koordinat
     df_year['Coordinates'] = df_year['Kecamatan'].map(kecamatan_coords)
-    
     df_year = df_year[df_year['Coordinates'].notna()]
     
     color_map = {
