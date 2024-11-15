@@ -3,14 +3,10 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
 import plotly.express as px
 import plotly.graph_objects as go
 import folium
 from folium.plugins import MarkerCluster
-import io
 
 app = Flask(__name__)
 
@@ -41,37 +37,89 @@ def load_data():
     df = pd.read_excel(DATA_PATH)
     return df
 
+# Menghitung jarak Euclidean
+def euclidean_distance(a, b):
+    return np.sqrt(np.sum((a - b) ** 2))
+
+# Menghitung jarak untuk setiap titik data ke centroid
+def calculate_distances(df, centroid_c1, centroid_c2):
+    distances_c1 = []
+    distances_c2 = []
+    
+    for index, row in df.iterrows():
+        data = np.array([row["Jumlah Kecelakaan"], row["Jumlah Meninggal"], row["Jumlah Luka Berat"], row["Jumlah Luka Ringan"]])
+        distances_c1.append(euclidean_distance(data, centroid_c1))
+        distances_c2.append(euclidean_distance(data, centroid_c2))
+    
+    return distances_c1, distances_c2
+
+# Pembaruan Centroid
+def update_centroids(df, cluster_c1, cluster_c2):
+    centroid_c1 = np.mean(cluster_c1, axis=0)
+    centroid_c2 = np.mean(cluster_c2, axis=0)
+    return centroid_c1, centroid_c2
+
+# Menghitung Purity
+def calculate_purity(df):
+    correct = 0
+    total = len(df)
+    
+    for index, row in df.iterrows():
+        if row['Cluster'] == 1:  # C1 = Rawan
+            if row['Tingkat Kerawanan'] == "Rawan":
+                correct += 1
+        elif row['Cluster'] == 2:  # C2 = Tidak Rawan
+            if row['Tingkat Kerawanan'] == "Tidak Rawan":
+                correct += 1
+    
+    purity = correct / total
+    return purity
+
 # Fungsi untuk melatih model
 def train_model():
     df = load_data()
     features = ["Jumlah Kecelakaan", "Jumlah Meninggal", "Jumlah Luka Berat", "Jumlah Luka Ringan"]
     X = df[features]
     
-    # Normalisasi data
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-    
-    # Tentukan jumlah klaster
-    k = 4  # Aman, Berpotensi Rawan, Rawan, Sangat Rawan
-    
-    # Terapkan K-Means clustering
-    kmeans = KMeans(n_clusters=k, random_state=42)
-    kmeans.fit(X_scaled)
-    df['Cluster'] = kmeans.labels_
-    
-    # Simpan scaler dan model
-    joblib.dump(scaler, SCALER_PATH)
-    joblib.dump(kmeans, MODEL_PATH)
-    
+    # Tentukan jumlah klaster berdasarkan kebutuhan atau hasil WCSS
+    k = 2  # Jumlah klaster yang sesuai dengan dokumen (Rawan dan Tidak Rawan)
+
+    # Inisialisasi centroid manual
+    centroid_c1 = np.array([169, 3, 12, 26])  # Contoh centroid C1
+    centroid_c2 = np.array([55, 3, 16, 42])  # Contoh centroid C2
+
+    # Iterasi untuk memperbarui centroid
+    for i in range(10):  # Maksimal 10 iterasi
+        # Menghitung jarak
+        distances_c1, distances_c2 = calculate_distances(df, centroid_c1, centroid_c2)
+        
+        # Menetapkan klaster berdasarkan jarak
+        df['Cluster'] = np.where(np.array(distances_c1) < np.array(distances_c2), 1, 2)  # C1=1, C2=2
+        
+        # Mengelompokkan data untuk klaster 1 dan klaster 2
+        cluster_c1 = df[df['Cluster'] == 1][['Jumlah Kecelakaan', 'Jumlah Meninggal', 'Jumlah Luka Berat', 'Jumlah Luka Ringan']].values
+        cluster_c2 = df[df['Cluster'] == 2][['Jumlah Kecelakaan', 'Jumlah Meninggal', 'Jumlah Luka Berat', 'Jumlah Luka Ringan']].values
+        
+        # Pembaruan centroid
+        new_centroid_c1, new_centroid_c2 = update_centroids(df, cluster_c1, cluster_c2)
+        
+        # Jika centroid tidak berubah, hentikan iterasi
+        if np.array_equal(new_centroid_c1, centroid_c1) and np.array_equal(new_centroid_c2, centroid_c2):
+            break
+        
+        centroid_c1, centroid_c2 = new_centroid_c1, new_centroid_c2
+
     # Mapping klaster ke tingkat kerawanan
     cluster_map = {
-        0: "Aman",
-        1: "Berpotensi Rawan",
-        2: "Rawan",
-        3: "Sangat Rawan"
+        1: "Rawan",
+        2: "Tidak Rawan"
     }
     df['Tingkat Kerawanan'] = df['Cluster'].map(cluster_map)
-    
+
+    # Menghitung Purity
+    purity = calculate_purity(df)
+    print(f"Purity: {purity * 100:.2f}%")
+
     # Simpan hasil ke Excel
     df.to_excel(OUTPUT_EXCEL, index=False)
     
@@ -83,12 +131,14 @@ def index():
     return render_template('index.html')
 
 # Rute untuk Melatih Model
-@app.route('/train', methods=['GET', 'POST'])
+@app.route('/train', methods=['GET'])
 def train():
-    if request.method == 'POST':
-        df = train_model()
-        return redirect(url_for('results'))
     return render_template('train.html')
+
+@app.route('/train_model', methods=['GET'])
+def train_model_route():
+    df = train_model()  # Panggil fungsi train_model
+    return redirect(url_for('results'))  # Redirect ke halaman results setelah model dilatih
 
 # Rute untuk Menampilkan Hasil Klasterisasi
 @app.route('/results')
@@ -110,30 +160,23 @@ def visualize():
 
     df = pd.read_excel(OUTPUT_EXCEL)
     
-    # **Bagian 1: Visualisasi Bar Chart Tingkat Kerawanan per Tahun**
-    
-    # Group by year and severity level
+    # Visualisasi Bar Chart Tingkat Kerawanan per Tahun
     severity_by_year = df.groupby(['Tahun', 'Tingkat Kerawanan']).size().unstack(fill_value=0).reset_index()
-    
-    # Melt the DataFrame untuk Plotly
     severity_melted = pd.melt(severity_by_year, id_vars=['Tahun'], 
-                               value_vars=["Aman", "Berpotensi Rawan", "Rawan", "Sangat Rawan"], 
+                               value_vars=["Rawan", "Tidak Rawan"], 
                                var_name='Tingkat Kerawanan', value_name='Jumlah Kasus')
     
-    # Visualisasi dengan Plotly Bar Chart
     fig_bar = px.bar(severity_melted, x='Tahun', y='Jumlah Kasus', color='Tingkat Kerawanan',
                      title='Jumlah Tingkat Keparahan Kecelakaan Per Tahun',
                      labels={'Jumlah Kasus': 'Jumlah Kasus'},
                      height=600, 
                      width=1000, 
                      text='Jumlah Kasus',
-                     category_orders={'Tingkat Kerawanan': ["Aman", "Berpotensi Rawan", "Rawan", "Sangat Rawan"]})
+                     category_orders={'Tingkat Kerawanan': ["Rawan", "Tidak Rawan"]})
     
-    # Tambahkan label pada bar chart
     fig_bar.update_traces(texttemplate='%{text}', textposition='outside', 
                           marker=dict(line=dict(color='rgb(0,0,0)', width=1.5)))
     
-    # Update layout
     fig_bar.update_layout(xaxis_title='Tahun',
                           yaxis_title='Jumlah Kasus',
                           legend_title='Tingkat Kerawanan',
@@ -141,78 +184,7 @@ def visualize():
     
     graph_html = fig_bar.to_html(full_html=False)
     
-    # **Bagian 2: Visualisasi Tabel Tingkat Kerawanan per Kecamatan dan Tahun**
-    
-    # Pivot tabel untuk Plotly
-    table_pivot = df.pivot_table(index='Kecamatan', columns='Tahun', values='Tingkat Kerawanan', aggfunc=lambda x: ', '.join(x.unique()))
-    table_pivot.reset_index(inplace=True)
-    
-    # Pastikan urutan kolom tahun
-    years = sorted(df['Tahun'].unique())
-    columns = ['Kecamatan'] + years
-    
-    # Menyesuaikan urutan kolom
-    table_pivot = table_pivot.reindex(columns=columns)
-    
-    # Membuat data untuk Plotly Table
-    header = dict(values=table_pivot.columns.tolist(),
-                  fill_color='paleturquoise',
-                  align='left')
-    
-    cells = dict(values=[table_pivot[col].tolist() for col in table_pivot.columns],
-                 fill_color='lavender',
-                 align='left')
-    
-    fig_table = go.Figure(data=[go.Table(header=header, cells=cells)])
-    
-    fig_table.update_layout(title='Tingkat Kerawanan per Kecamatan dan Tahun')
-    
-    table_html = fig_table.to_html(full_html=False)
-
-    # **Bagian 3: Visualisasi Stacked Bar Chart untuk Meninggal, Luka Berat, dan Luka Ringan**
-    
-    # Mengelompokkan data berdasarkan kecamatan dan tahun, menghitung total masing-masing kategori
-    summary_by_category = df.groupby(['Kecamatan', 'Tahun']).agg({
-        'Jumlah Meninggal': 'sum',
-        'Jumlah Luka Berat': 'sum',
-        'Jumlah Luka Ringan': 'sum'
-    }).reset_index()
-
-    # Membuat data dalam format long untuk visualisasi stacked bar chart
-    summary_melted = summary_by_category.melt(
-        id_vars=['Kecamatan', 'Tahun'],
-        value_vars=['Jumlah Meninggal', 'Jumlah Luka Berat', 'Jumlah Luka Ringan'],
-        var_name='Kategori',
-        value_name='Jumlah'
-    )
-
-    # Visualisasi dengan Plotly untuk Stacked Bar Chart
-    fig_stacked = px.bar(
-        summary_melted,
-        x='Kecamatan',
-        y='Jumlah',
-        color='Kategori',
-        barmode='stack',
-        facet_col='Tahun',
-        height=600,
-        title='Jumlah Meninggal, Luka Berat, dan Luka Ringan Per Tahun Berdasarkan Kecamatan'
-    )
-    
-    fig_stacked.update_layout(
-        xaxis_title='Kecamatan',
-        yaxis_title='Jumlah Kasus',
-        legend_title='Kategori'
-    )
-    
-    fig_stacked.update_xaxes(tickangle=45)
-
-    stacked_graph_html = fig_stacked.to_html(full_html=False)
-
-    return render_template('visualize.html', 
-                           graph_html=graph_html, 
-                           table_html=table_html, 
-                           stacked_graph_html=stacked_graph_html)
-
+    return render_template('visualize.html', graph_html=graph_html)
 
 # Rute untuk Menampilkan Peta Folium dengan Pemilihan Tahun
 @app.route('/map', methods=['GET', 'POST'])
@@ -235,7 +207,6 @@ def map_view():
         df_year = df[df['Tahun'] == selected_year]
         title = f"Tingkat Kerawanan Kecelakaan Tahun {selected_year}"
     else:
-        # Jika tidak ada tahun yang dipilih, tampilkan peta tanpa filter atau dengan tahun terbaru
         selected_year = df['Tahun'].max()
         df_year = df[df['Tahun'] == selected_year]
         title = f"Tingkat Kerawanan Kecelakaan Tahun {selected_year}"
@@ -243,22 +214,16 @@ def map_view():
     # Tambahkan koordinat
     df_year['Coordinates'] = df_year['Kecamatan'].map(kecamatan_coords)
     
-    # Hanya baris dengan koordinat valid
     df_year = df_year[df_year['Coordinates'].notna()]
     
-    # Warna untuk setiap tingkat kerawanan
     color_map = {
-        "Aman": "green",
-        "Berpotensi Rawan": "yellow",
         "Rawan": "orange",
-        "Sangat Rawan": "red"
+        "Tidak Rawan": "green"
     }
     
-    # Buat peta dasar
     m = folium.Map(location=[1.4099, 99.7092], zoom_start=10)
     marker_cluster = MarkerCluster().add_to(m)
     
-    # Tambahkan marker
     for _, row in df_year.iterrows():
         coords = row['Coordinates']
         folium.Marker(
@@ -267,7 +232,6 @@ def map_view():
             icon=folium.Icon(color=color_map.get(row['Tingkat Kerawanan'], 'blue'))
         ).add_to(marker_cluster)
     
-    # Render Folium map sebagai HTML
     map_html = m._repr_html_()
     
     return render_template('map.html', map_html=map_html, available_years=available_years, selected_year=selected_year, title=title)
@@ -280,7 +244,6 @@ def download():
     return send_file(OUTPUT_EXCEL, as_attachment=True)
 
 if __name__ == '__main__':
-    # Pastikan direktori models dan data ada
     os.makedirs('models', exist_ok=True)
     os.makedirs('data', exist_ok=True)
     app.run(debug=True)
