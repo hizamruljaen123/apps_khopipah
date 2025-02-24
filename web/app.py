@@ -144,7 +144,6 @@ def results():
     return render_template('results.html', data=data)
 
 # Rute untuk Visualisasi dengan Plotly
-# Rute untuk Visualisasi dengan Plotly
 @app.route('/visualize')
 def visualize():
     if not os.path.exists(OUTPUT_EXCEL):
@@ -161,11 +160,20 @@ def visualize():
                               value_vars=["Rawan", "Tidak Rawan"],
                               var_name='Tingkat Kerawanan', value_name='Jumlah Kasus')
 
-    fig_bar = px.bar(severity_melted, x='Tahun', y='Jumlah Kasus', color='Tingkat Kerawanan',
-                     title='Jumlah Tingkat Keparahan Kecelakaan Per Tahun',
-                     labels={'Jumlah Kasus': 'Jumlah Kasus'},
-                     height=600, width=1000, text='Jumlah Kasus',
-                     category_orders={'Tingkat Kerawanan': ["Rawan", "Tidak Rawan"]})
+    # Updated bar chart with custom colors
+    fig_bar = px.bar(
+        severity_melted,
+        x='Tahun',
+        y='Jumlah Kasus',
+        color='Tingkat Kerawanan',
+        title='Jumlah Tingkat Keparahan Kecelakaan Per Tahun',
+        labels={'Jumlah Kasus': 'Jumlah Kasus'},
+        height=600,
+        width=1000,
+        text='Jumlah Kasus',
+        category_orders={'Tingkat Kerawanan': ["Rawan", "Tidak Rawan"]},
+        color_discrete_map={"Rawan": "red", "Tidak Rawan": "blue"}  # Custom color map
+    )
 
     fig_bar.update_traces(texttemplate='%{text}', textposition='outside')
     fig_bar.update_layout(xaxis_title='Tahun',
@@ -176,15 +184,20 @@ def visualize():
     graph_html = fig_bar.to_html(full_html=False)
 
     # Visualisasi Bar Chart untuk Meninggal, Luka Berat, dan Luka Ringan
-    fig_stacked = px.bar(df, x='Kecamatan', y=['Jumlah Meninggal', 'Jumlah Luka Berat', 'Jumlah Luka Ringan'],
-                         title='Jumlah Meninggal, Luka Berat, dan Luka Ringan Per Tahun Berdasarkan Kecamatan',
-                         labels={'value': 'Jumlah Kasus', 'variable': 'Kategori'},
-                         barmode='stack', height=600, width=1000)
+    fig_stacked = px.bar(
+        df,
+        x='Kecamatan',
+        y=['Jumlah Meninggal', 'Jumlah Luka Berat', 'Jumlah Luka Ringan'],
+        title='Jumlah Meninggal, Luka Berat, dan Luka Ringan Per Tahun Berdasarkan Kecamatan',
+        labels={'value': 'Jumlah Kasus', 'variable': 'Kategori'},
+        barmode='stack',
+        height=600,
+        width=1000
+    )
 
     stacked_graph_html = fig_stacked.to_html(full_html=False)
 
     return render_template('visualize.html', table_html=table_html, graph_html=graph_html, stacked_graph_html=stacked_graph_html)
-
 
 # Rute untuk Menampilkan Peta Folium
 @app.route('/map', methods=['GET', 'POST'])
@@ -252,8 +265,8 @@ def map_view():
     # Tambahkan marker cluster untuk titik lokasi
     marker_cluster = MarkerCluster().add_to(m)
     color_map = {
-        "Rawan": "orange",
-        "Tidak Rawan": "green"
+        "Rawan": "red",
+        "Tidak Rawan": "blue"
     }
     
     for _, row in df_year.iterrows():
@@ -263,6 +276,20 @@ def map_view():
             popup=f"{row['Kecamatan']}: {row['Jumlah Kecelakaan']} kasus, Tingkat Kerawanan: {row['Tingkat Kerawanan']}",
             icon=folium.Icon(color=color_map.get(row['Tingkat Kerawanan'], 'blue'))
         ).add_to(marker_cluster)
+
+    # Add legend to the map
+    legend_html = '''
+     <div style="
+     position: fixed;
+     bottom: 50px; left: 50px; width: 150px; height: 90px;
+     background-color: white; z-index:9999; font-size:14px;
+     border:1px solid black; padding: 10px;">
+     <b>Legenda:</b><br>
+     <i style="background: red; width: 10px; height: 10px; display: inline-block;"></i> Rawan<br>
+     <i style="background: blue; width: 10px; height: 10px; display: inline-block;"></i> Tidak Rawan
+     </div>
+    '''
+    m.get_root().html.add_child(folium.Element(legend_html))
     
     map_html = m._repr_html_()
     
