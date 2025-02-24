@@ -6,6 +6,7 @@ import os
 import plotly.express as px
 import folium
 from folium.plugins import MarkerCluster
+import geopandas as gpd
 
 app = Flask(__name__)
 
@@ -14,6 +15,7 @@ DATA_PATH = 'data/Data_Kecelakaan_Padang_Lawas_Utara.xlsx'
 MODEL_PATH = 'models/kmeans_model.pkl'
 SCALER_PATH = 'models/scaler.pkl'
 OUTPUT_EXCEL = 'data/Hasil_Klastering_Kecelakaan_Padang_Lawas_Utara.xlsx'
+SHAPEFILE_PATH = 'data/maps/paluta.shp'
 
 # Koordinat kecamatan
 kecamatan_coords = {
@@ -210,13 +212,49 @@ def map_view():
     df_year['Coordinates'] = df_year['Kecamatan'].map(kecamatan_coords)
     df_year = df_year[df_year['Coordinates'].notna()]
     
+    # Membaca shapefile dengan geopandas
+    gdf = gpd.read_file(SHAPEFILE_PATH)
+    
+    # Pastikan kolom 'NAME_3' di shapefile sesuai dengan data Anda (diganti menjadi 'Kecamatan')
+    gdf = gdf.rename(columns={'NAME_3': 'Kecamatan'})  # Ganti 'NAME_3' dengan nama kolom yang benar jika berbeda
+    
+    # Gabungkan data kecelakaan dengan data geospatial
+    gdf_merged = gdf.merge(df_year[['Kecamatan', 'Tingkat Kerawanan', 'Jumlah Kecelakaan']], 
+                           on='Kecamatan', how='left')
+    
+    # Konversi ke proyeksi WGS84 (EPSG:4326) jika belum
+    gdf_merged = gdf_merged.to_crs(epsg=4326)
+    
+    # Definisikan peta folium
+    m = folium.Map(location=[1.4099, 99.7092], zoom_start=10)
+    
+    # Definisikan warna berdasarkan tingkat kerawanan
+    def style_function(feature):
+        kerawanan = feature['properties'].get('Tingkat Kerawanan', None)
+        return {
+            'fillColor': 'orange' if kerawanan == 'Rawan' else 'green' if kerawanan == 'Tidak Rawan' else 'gray',
+            'color': 'black',
+            'weight': 1,
+            'fillOpacity': 0.6
+        }
+    
+    # Tambahkan lapisan GeoJSON dari shapefile dengan arsiran wilayah
+    folium.GeoJson(
+        gdf_merged,
+        style_function=style_function,
+        tooltip=folium.GeoJsonTooltip(
+            fields=['Kecamatan', 'Tingkat Kerawanan', 'Jumlah Kecelakaan'],
+            aliases=['Kecamatan', 'Tingkat Kerawanan', 'Jumlah Kecelakaan'],
+            localize=True
+        )
+    ).add_to(m)
+    
+    # Tambahkan marker cluster untuk titik lokasi
+    marker_cluster = MarkerCluster().add_to(m)
     color_map = {
         "Rawan": "orange",
         "Tidak Rawan": "green"
     }
-    
-    m = folium.Map(location=[1.4099, 99.7092], zoom_start=10)
-    marker_cluster = MarkerCluster().add_to(m)
     
     for _, row in df_year.iterrows():
         coords = row['Coordinates']
@@ -228,8 +266,8 @@ def map_view():
     
     map_html = m._repr_html_()
     
-    return render_template('map.html', map_html=map_html, available_years=available_years, selected_year=selected_year, title=title)
-
+    return render_template('map.html', map_html=map_html, available_years=available_years, 
+                           selected_year=selected_year, title=title)
 # Rute untuk Mengunduh Hasil Klasterisasi
 @app.route('/download')
 def download():
