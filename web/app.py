@@ -238,8 +238,17 @@ def map_view():
     # Konversi ke proyeksi WGS84 (EPSG:4326) jika belum
     gdf_merged = gdf_merged.to_crs(epsg=4326)
     
-    # Definisikan peta folium
-    m = folium.Map(location=[1.4099, 99.7092], zoom_start=10)
+    # Definisikan peta folium dengan layer citra satelit
+    m = folium.Map(location=[1.4099, 99.7092], zoom_start=10, tiles=None)  # tiles=None untuk hapus default
+    
+    # Tambahkan layer citra satelit dari Esri
+    folium.TileLayer(
+        tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        attr='Esri',
+        name='Esri Satellite',
+        overlay=False,
+        control=True
+    ).add_to(m)
     
     # Definisikan warna berdasarkan tingkat kerawanan
     def style_function(feature):
@@ -251,7 +260,7 @@ def map_view():
             'fillOpacity': 0.6
         }
     
-    # Tambahkan lapisan GeoJSON dari shapefile dengan arsiran wilayah
+    # Tambahkan lapisan GeoJSON dari shapefile dengan arsiran wilayah dan nama kecamatan
     folium.GeoJson(
         gdf_merged,
         style_function=style_function,
@@ -262,31 +271,29 @@ def map_view():
         )
     ).add_to(m)
     
-    # Tambahkan marker cluster untuk titik lokasi
-    marker_cluster = MarkerCluster().add_to(m)
-    color_map = {
-        "Rawan": "red",
-        "Tidak Rawan": "blue"
-    }
-    
-    for _, row in df_year.iterrows():
-        coords = row['Coordinates']
-        folium.Marker(
-            location=coords,
-            popup=f"{row['Kecamatan']}: {row['Jumlah Kecelakaan']} kasus, Tingkat Kerawanan: {row['Tingkat Kerawanan']}",
-            icon=folium.Icon(color=color_map.get(row['Tingkat Kerawanan'], 'blue'))
-        ).add_to(marker_cluster)
+    # Tambahkan nama kecamatan di tengah wilayah
+    for _, row in gdf_merged.iterrows():
+        if not pd.isna(row['Kecamatan']):
+            # Gunakan centroid geometri untuk menempatkan nama
+            centroid = row['geometry'].centroid
+            folium.Marker(
+                location=[centroid.y, centroid.x],
+                icon=folium.DivIcon(
+                    html=f'<div style="font-size: 12pt; color: white; text-align: center; text-shadow: 1px 1px 2px black;">{row["Kecamatan"]}</div>',
+                    icon_size=(150, 36)
+                )
+            ).add_to(m)
 
     # Add legend to the map
     legend_html = '''
      <div style="
      position: fixed;
      bottom: 50px; left: 50px; width: 150px; height: 90px;
-     background-color: white; z-index:9999; font-size:14px;
+     background-color: rgba(255, 255, 255, 0.8); z-index:9999; font-size:14px;
      border:1px solid black; padding: 10px;">
      <b>Legenda:</b><br>
-     <i style="background: red; width: 10px; height: 10px; display: inline-block;"></i> Rawan<br>
-     <i style="background: blue; width: 10px; height: 10px; display: inline-block;"></i> Tidak Rawan
+     <i style="background: orange; width: 10px; height: 10px; display: inline-block;"></i> Rawan<br>
+     <i style="background: green; width: 10px; height: 10px; display: inline-block;"></i> Tidak Rawan
      </div>
     '''
     m.get_root().html.add_child(folium.Element(legend_html))
