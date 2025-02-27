@@ -66,9 +66,9 @@ def calculate_purity(df):
     total = len(df)
     
     for index, row in df.iterrows():
-        if row['Cluster'] == 1 and row['Tingkat Kerawanan'] == "C1 Rawan":
+        if row['Cluster'] == 1 and row['Tingkat Kerawanan'] == "C1":
             correct += 1
-        elif row['Cluster'] == 2 and row['Tingkat Kerawanan'] == "C2 Tidak Rawan":
+        elif row['Cluster'] == 2 and row['Tingkat Kerawanan'] == "C2":
             correct += 1
     
     purity = correct / total
@@ -104,8 +104,8 @@ def train_model():
 
     # Mapping klaster ke tingkat kerawanan
     cluster_map = {
-        1: "C1 Rawan",
-        2: "C2 Tidak Rawan"
+        1: "C1",
+        2: "C2"
     }
     df['Tingkat Kerawanan'] = df['Cluster'].map(cluster_map)
 
@@ -157,7 +157,7 @@ def visualize():
     # Visualisasi Bar Chart Tingkat Kerawanan per Tahun
     severity_by_year = df.groupby(['Tahun', 'Tingkat Kerawanan']).size().unstack(fill_value=0).reset_index()
     severity_melted = pd.melt(severity_by_year, id_vars=['Tahun'],
-                              value_vars=["C1 Rawan", "C2 Tidak Rawan"],
+                              value_vars=["C1", "C2"],
                               var_name='Tingkat Kerawanan', value_name='Jumlah Kasus')
 
     # Updated bar chart with custom colors
@@ -171,8 +171,8 @@ def visualize():
         height=600,
         width=1000,
         text='Jumlah Kasus',
-        category_orders={'Tingkat Kerawanan': ["C1 Rawan", "C2 Tidak Rawan"]},
-        color_discrete_map={"C1 Rawan": "red", "C2 Tidak Rawan": "blue"}  # Custom color map
+        category_orders={'Tingkat Kerawanan': ["C1", "C2"]},
+        color_discrete_map={"C1": "red", "C2": "blue"}  # Custom color map
     )
 
     fig_bar.update_traces(texttemplate='%{text}', textposition='outside')
