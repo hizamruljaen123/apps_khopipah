@@ -254,7 +254,7 @@ def map_view():
     def style_function(feature):
         kerawanan = feature['properties'].get('Tingkat Kerawanan', None)
         return {
-            'fillColor': 'orange' if kerawanan == 'C1 Rawan' else 'green' if kerawanan == 'C2 Tidak Rawan' else 'gray',
+            'fillColor': 'orange' if kerawanan == 'C1' else 'green' if kerawanan == 'C2' else 'gray',
             'color': 'black',
             'weight': 1,
             'fillOpacity': 0.6
@@ -292,8 +292,8 @@ def map_view():
      background-color: rgba(255, 255, 255, 0.8); z-index:9999; font-size:14px;
      border:1px solid black; padding: 10px;">
      <b>Legenda:</b><br>
-     <i style="background: orange; width: 10px; height: 10px; display: inline-block;"></i>C1 Rawan<br>
-     <i style="background: green; width: 10px; height: 10px; display: inline-block;"></i>C2 Tidak Rawan
+     <i style="background: orange; width: 10px; height: 10px; display: inline-block;"></i>C1<br>
+     <i style="background: green; width: 10px; height: 10px; display: inline-block;"></i>C2
      </div>
     '''
     m.get_root().html.add_child(folium.Element(legend_html))
