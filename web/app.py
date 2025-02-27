@@ -66,9 +66,9 @@ def calculate_purity(df):
     total = len(df)
     
     for index, row in df.iterrows():
-        if row['Cluster'] == 1 and row['Tingkat Kerawanan'] == "Rawan":
+        if row['Cluster'] == 1 and row['Tingkat Kerawanan'] == "C1 Rawan":
             correct += 1
-        elif row['Cluster'] == 2 and row['Tingkat Kerawanan'] == "Tidak Rawan":
+        elif row['Cluster'] == 2 and row['Tingkat Kerawanan'] == "C2 Tidak Rawan":
             correct += 1
     
     purity = correct / total
@@ -104,8 +104,8 @@ def train_model():
 
     # Mapping klaster ke tingkat kerawanan
     cluster_map = {
-        1: "Rawan",
-        2: "Tidak Rawan"
+        1: "C1 Rawan",
+        2: "C2 Tidak Rawan"
     }
     df['Tingkat Kerawanan'] = df['Cluster'].map(cluster_map)
 
@@ -157,7 +157,7 @@ def visualize():
     # Visualisasi Bar Chart Tingkat Kerawanan per Tahun
     severity_by_year = df.groupby(['Tahun', 'Tingkat Kerawanan']).size().unstack(fill_value=0).reset_index()
     severity_melted = pd.melt(severity_by_year, id_vars=['Tahun'],
-                              value_vars=["Rawan", "Tidak Rawan"],
+                              value_vars=["C1 Rawan", "C2 Tidak Rawan"],
                               var_name='Tingkat Kerawanan', value_name='Jumlah Kasus')
 
     # Updated bar chart with custom colors
@@ -171,8 +171,8 @@ def visualize():
         height=600,
         width=1000,
         text='Jumlah Kasus',
-        category_orders={'Tingkat Kerawanan': ["Rawan", "Tidak Rawan"]},
-        color_discrete_map={"Rawan": "red", "Tidak Rawan": "blue"}  # Custom color map
+        category_orders={'Tingkat Kerawanan': ["C1 Rawan", "C2 Tidak Rawan"]},
+        color_discrete_map={"C1 Rawan": "red", "C2 Tidak Rawan": "blue"}  # Custom color map
     )
 
     fig_bar.update_traces(texttemplate='%{text}', textposition='outside')
@@ -254,7 +254,7 @@ def map_view():
     def style_function(feature):
         kerawanan = feature['properties'].get('Tingkat Kerawanan', None)
         return {
-            'fillColor': 'orange' if kerawanan == 'Rawan' else 'green' if kerawanan == 'Tidak Rawan' else 'gray',
+            'fillColor': 'orange' if kerawanan == 'C1 Rawan' else 'green' if kerawanan == 'C2 Tidak Rawan' else 'gray',
             'color': 'black',
             'weight': 1,
             'fillOpacity': 0.6
@@ -292,8 +292,8 @@ def map_view():
      background-color: rgba(255, 255, 255, 0.8); z-index:9999; font-size:14px;
      border:1px solid black; padding: 10px;">
      <b>Legenda:</b><br>
-     <i style="background: orange; width: 10px; height: 10px; display: inline-block;"></i> Rawan<br>
-     <i style="background: green; width: 10px; height: 10px; display: inline-block;"></i> Tidak Rawan
+     <i style="background: orange; width: 10px; height: 10px; display: inline-block;"></i>C1 Rawan<br>
+     <i style="background: green; width: 10px; height: 10px; display: inline-block;"></i>C2 Tidak Rawan
      </div>
     '''
     m.get_root().html.add_child(folium.Element(legend_html))
